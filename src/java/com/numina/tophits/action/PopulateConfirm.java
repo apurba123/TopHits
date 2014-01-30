@@ -20,7 +20,7 @@ public class PopulateConfirm extends HttpServlet {
         PrintWriter out = response.getWriter();
         try {
             int laneno = Integer.parseInt(request.getParameter("laneno"));
-            String sql = "select audit,box_size from app_lanes where lane=" + laneno;
+            String sql = "select audit,box_qty_sorted from app_lanes where lane=" + laneno;
             Connection conn = DbConnection.getDbConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql);
             ResultSet rs = pstmt.executeQuery();
@@ -29,7 +29,7 @@ public class PopulateConfirm extends HttpServlet {
 
             if (rs.next()) {
                 audit = rs.getString("audit");
-                boxSize = rs.getInt("box_size");
+                boxSize = rs.getInt("box_qty_sorted");
             }
             out.println(audit + "," + boxSize);
 

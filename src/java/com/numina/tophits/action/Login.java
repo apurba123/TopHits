@@ -1,10 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.numina.tophits.action;
 
+import com.numina.tophits.utils.ClientMachineName;
+import com.numina.tophits.utils.DbConnection;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,7 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.numina.tophits.utils.InternalDerbyDbManager;
-import com.numina.tophits.utils.SqlServerDbConnection;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,8 +36,8 @@ public class Login extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        //Connection conn = DbConnection.getDbConnection();
-        Connection conn = SqlServerDbConnection.getDbConnection();
+        Connection conn = DbConnection.getDbConnection();
+       // Connection conn = SqlServerDbConnection.getDbConnection();
         boolean loginflag = false;
         if (conn != null) {
             try {
@@ -49,8 +49,8 @@ public class Login extends HttpServlet {
                 if (request.getParameter("pwd_r") != null) {
                     pwd = request.getParameter("pwd_r");
                 }
-               // String sql = "select employee_id,password from employee_login where employee_id='" + uid + "' and password='" + pwd + "'";
-                String sql = "select EmployeeId,Password from Employee where EmployeeId='" + uid + "' and Password='" + pwd + "'";
+                String sql = "select employee_id,password from employee_login where employee_id='" + uid + "' and password='" + pwd + "'";
+                //String sql = "select EmployeeId,Password from Employee where EmployeeId='" + uid + "' and Password='" + pwd + "'";
                 PreparedStatement pstmt = conn.prepareStatement(sql);
                 ResultSet rs = pstmt.executeQuery();
                 while (rs.next()) {
@@ -92,6 +92,20 @@ public class Login extends HttpServlet {
                     rd.forward(request, response);
                     // response.sendRedirect("index.jsp?status=0");
                 }
+                
+                
+                InetAddress ip;
+	try {
+ 
+	ClientMachineName.findClientComputerName(request);
+            
+ 
+	} catch (Exception e) {
+ 
+		e.printStackTrace();
+ 
+	} 
+
 
             } catch (SQLException e) {
                 log.error("Error::" + e);

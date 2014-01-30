@@ -89,22 +89,14 @@ public class LaneStatus extends HttpServlet {
             }
             rs1.close();
             pstmt1.close();
+            conn.close();
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(LaneStatus.class.getName()).log(Level.SEVERE, null, ex);
             log.error("Error::" + ex);
-        } finally {
-            try {
-                conn.close();
-                conn = null;
-                //log.info("DB Connection CLOSED.");
-            } catch (SQLException ex) {
-                java.util.logging.Logger.getLogger(LaneStatus.class.getName()).log(Level.SEVERE, null, ex);
-                log.error("Error in Closing DB Connection:" + ex.getMessage());
-            }
         }
         String laneid[] = state.split(",");
 
-        // PrintWriter out = response.getWriter();
+      
         if (laneCount == null
                 || laneCount.equalsIgnoreCase("")) {
             out.println("Invalid Lane Count");
@@ -160,22 +152,15 @@ public class LaneStatus extends HttpServlet {
                         outString += laneId + "~" + laneStatus + "||";
 
                     }
+                   rs.close();
+                   pstmt.close();
+                   conn.close();
+                   out.println("" + outString.toString());
 
-                    out.println("" + outString.toString());
-                   
                 } catch (SQLException ex) {
                     java.util.logging.Logger.getLogger(LaneStatus.class.getName()).log(Level.SEVERE, null, ex);
                     log.error("Error::" + ex);
-                } finally {
-                    try {
-                        conn.close();
-                        conn = null;
-                        //log.info("DB Connection CLOSED.");
-                    } catch (SQLException ex) {
-                        java.util.logging.Logger.getLogger(LaneStatus.class.getName()).log(Level.SEVERE, null, ex);
-                        log.error("Error in Closing DB Connection:" + ex.getMessage());
-                    }
-                }
+                } 
             }
         }
 

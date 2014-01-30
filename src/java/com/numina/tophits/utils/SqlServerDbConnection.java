@@ -7,8 +7,7 @@ package com.numina.tophits.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.SQLException;
 import org.apache.log4j.Logger;
 
 /**
@@ -36,8 +35,10 @@ public class SqlServerDbConnection {
 //                }
 //            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            log.error("Error in db sql server connection");
+        } catch (SQLException e) {
+             log.error("Error in db sql server connection");
         }
 
         return conn;
