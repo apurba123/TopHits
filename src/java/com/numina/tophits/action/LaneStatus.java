@@ -135,7 +135,12 @@ public class LaneStatus extends HttpServlet {
                             } else {
                                 denominator = boxSize;
                             }
+                            
                             Integer fillPercent = (int) (((double) boxQtySorted.doubleValue() / denominator.doubleValue()) * 100.0000);
+                            if(fillPercent>100){
+                                laneStatus = LANE_FULL;
+                            }
+                            else
                             if (fillPercent >= NEAR_PERCNT) {
                                 laneStatus = LANE_NEARFULL;
                             } else {

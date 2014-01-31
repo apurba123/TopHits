@@ -25,6 +25,7 @@ public class InternalDerbyDbManager {
     public static String PRINTER_LIST_TABLE = "PRINTER_LIST";
     public static String DEFAULT_PRINTER_TABLE = "DEFAULT_PRINTER";
     public static String UTILITY_TABLE = "UTILITY";
+    public static String LOGIN_TABLE = "EMPLOYEE";
 
     private static final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
     private static final String dbName = "TopHitsDerbyDb"; // the name of the database
@@ -159,7 +160,7 @@ public class InternalDerbyDbManager {
         }
 
         if (dropTablesIfExists) {
-           //dropAllTables();
+          // dropAllTables();
         }
 
         // Assumption: If the PRINTER_LIST table doesn't exist, none of the
@@ -169,6 +170,7 @@ public class InternalDerbyDbManager {
             //createPrinterListTable();
             createDefaultPrinterTable();
             createUtilityTable();
+            createEmployeeTable();
             //As all the tables are newly created, so it is necessary 
             //to add the default data in the Database
             addAllDefaultData();
@@ -237,6 +239,18 @@ public class InternalDerbyDbManager {
                 + "utilityname  VARCHAR(50) NOT NULL, "
                 + "utilityvalue VARCHAR(50) DEFAULT '', "
                 + "clientid    INT )");
+
+    }
+    
+    private static void createEmployeeTable() throws Exception {
+        System.out.println("Creating EMPLOYEE table");
+
+         executeUpdate(
+                "CREATE TABLE " + LOGIN_TABLE + " ("
+                + "employeeid   VARCHAR(20) NOT NULL, "
+                + "logstatus VARCHAR(20) NOT NULL )");
+          executeUpdate(
+                "ALTER TABLE " + LOGIN_TABLE + " ADD CONSTRAINT Employee_PK PRIMARY KEY(employeeid)");
 
     }
 
