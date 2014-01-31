@@ -1,9 +1,7 @@
 package com.numina.tophits.action;
 
-import com.numina.tophits.utils.InternalDerbyDbManager;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -21,19 +19,11 @@ public class Logout extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        HttpSession session = request.getSession(true);
-        String employeeid = (String) session.getAttribute("employeeId");
         try {
-
-            String sqlQuery = "update EMPLOYEE set logstatus='idle' where employeeid='" + employeeid + "'";
-
-            InternalDerbyDbManager.executeUpdate(sqlQuery);
-
+            HttpSession session = request.getSession(true);
             session.setAttribute("employeeId", null);
             RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
             rd.forward(request, response);
-        } catch (Exception e) {
-
         } finally {
             out.close();
         }

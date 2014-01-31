@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.numina.tophits.utils.InternalDerbyDbManager;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,7 +37,7 @@ public class Login extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         Connection conn = DbConnection.getDbConnection();
-        // Connection conn = SqlServerDbConnection.getDbConnection();
+       // Connection conn = SqlServerDbConnection.getDbConnection();
         boolean loginflag = false;
         if (conn != null) {
             try {
@@ -58,7 +61,6 @@ public class Login extends HttpServlet {
                 if (loginflag) {
                     // rd = request.getRequestDispatcher("home.jsp");
                     Connection connDerby = null;
-                    int statusflag = 0;
                     try {
                         int cnt = 0;
                         String sqlQuery = "select count(*) from UTILITY where UTILITYNAME='NearFull' and clientid=" + uid;
@@ -71,37 +73,6 @@ public class Login extends HttpServlet {
                             sqlQuery = "insert into UTILITY (utilityname,utilityvalue,clientid) VALUES('NearFull','90'," + uid + ")";
                             InternalDerbyDbManager.executeUpdate(sqlQuery);
                         }
-                        InternalDerbyDbManager.releaseConnection(connDerby);
-                        connDerby = InternalDerbyDbManager.getConnection();
-                        String status = "";
-                        String qry = "select logstatus from EMPLOYEE where employeeid='" + uid + "'";
-
-                        ResultSet rslt = InternalDerbyDbManager.executeQueryNoParams(connDerby, qry);
-                        if (rslt.next()) {
-                            status = rslt.getString(1);
-                        }
-                        InternalDerbyDbManager.releaseConnection(connDerby);
-                        if (status.trim().equals("")) {
-                            sqlQuery = "insert into EMPLOYEE (employeeid,logstatus) VALUES('" + uid + "','active')";
-                            InternalDerbyDbManager.executeUpdate(sqlQuery);
-
-                            statusflag = 1;
-
-                        } else if (status.trim().equals("idle")) {
-                            statusflag = 1;
-                            try {
-
-                                sqlQuery = "update EMPLOYEE set logstatus='active' where employeeid='" + uid + "'";
-
-                                InternalDerbyDbManager.executeUpdate(sqlQuery);
-
-                            } catch (Exception e) {
-
-                            }
-
-                        } else if (status.trim().equals("active")) {
-                            statusflag = 0;
-                        }
 
                     } catch (Exception ex) {
                         java.util.logging.Logger.getLogger(LaneStatus.class.getName()).log(Level.SEVERE, null, ex);
@@ -112,22 +83,29 @@ public class Login extends HttpServlet {
                             java.util.logging.Logger.getLogger(LaneStatus.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
-
-                    if (statusflag == 1) {
-
-                        response.sendRedirect("home.jsp");
-                    } else {
-                        RequestDispatcher rd = request.getRequestDispatcher("index.jsp?status=1");
-                        rd.forward(request, response);
-                    }
                     HttpSession session = request.getSession();
                     session.setAttribute("employeeId", uid);
+                    response.sendRedirect("home.jsp");
 
                 } else {
                     RequestDispatcher rd = request.getRequestDispatcher("index.jsp?status=0");
                     rd.forward(request, response);
                     // response.sendRedirect("index.jsp?status=0");
                 }
+                
+                
+                InetAddress ip;
+	try {
+ 
+	ClientMachineName.findClientComputerName(request);
+            
+ 
+	} catch (Exception e) {
+ 
+		e.printStackTrace();
+ 
+	} 
+
 
             } catch (SQLException e) {
                 log.error("Error::" + e);
