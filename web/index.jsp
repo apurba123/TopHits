@@ -11,10 +11,16 @@
         <script>
             function err()
             {
-                alert(generic.UUID);
-            <% if (request.getParameter("status") != null) {%>
+            <% if (request.getParameter("status") != null) {
+                    String st = (String) request.getParameter("status");
+                    if (st.equals("0")) {
+            %>
                 document.getElementById('message').innerHTML = "Invalid User Name or Password";
-            <%} else {%>
+            <%} else if (st.equals("1")) {%>
+                document.getElementById('message').innerHTML = 'Already Logged In Please <a href="Logout" style="color:red;text-decoration:underline"> Logout </a>';
+
+            <%}
+   } else {%>
                 document.getElementById('message').innerHTML = "";
             <%}%>
             }

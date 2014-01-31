@@ -44,7 +44,6 @@
                     setInterval(function() {
                         getColor();
                         checkComplete();
-
                         document.getElementById('lanes').style.display = "";
                         document.getElementById('planes').style.display = "";
                         document.getElementById('loader').style.display = "none";
