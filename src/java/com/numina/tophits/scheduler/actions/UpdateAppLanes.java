@@ -23,7 +23,8 @@ public class UpdateAppLanes implements Job {
         int boxSize = 0 + (int) (Math.random() * 15);
         int qtyAsked = 0 + (int) (Math.random() * 15);
         try {
-            String sql = "update app_lanes set box_qty_sorted=" + boxQtySorted + ",box_size=" + boxSize + ",qty_asked=" + qtyAsked + " where lane=" + lane;
+            String sql = "update app_lanes set box_qty_sorted="+boxQtySorted+",box_size="+boxSize+",qty_asked="+qtyAsked+",qty_closed=0"+
+                         " where lane=" + lane;
             
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.executeUpdate();

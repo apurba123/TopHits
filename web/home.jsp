@@ -1,6 +1,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
+    <% String login= (String) session.getAttribute("LoginFlag"); 
+        if(login.equalsIgnoreCase("1")){
+    %>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
@@ -21,7 +24,6 @@
             }
         </script>
 
-
         <link rel="stylesheet" href="css/topHits.css" type="text/css" />
         <script src="js/jQuery 1.10.2.js" type="text/javascript"></script>
         <script type="text/javascript" src="js/topHits.js"></script>
@@ -29,13 +31,17 @@
         <script type='text/javascript' src='js/rhoapi-modules.js'></script>
 
         <script type="text/javascript">
+            function logOut(){
+                document.forms[0].action = "/TopHits/Logout";
+                document.forms[0].submit();
+                return true;
+            }
             $(document).ready(function() {
                 $("#Tbtn").click(function() {
                     $("#mainContentArea").slideToggle("slow");
                     $(this).toggleClass("tOpen");
                 });
             });
-
 
             //To Auto ReFresh Lane Colors via Ajax Call
             $(document).ready(function() {
@@ -62,19 +68,17 @@
             response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
             response.setDateHeader("Expires", 0); // Proxies.
 
-            if (session.getAttribute("employeeId") == null) {
+            if (session.getAttribute("employeeId") == null
+                    || session.getAttribute("employeeId") == "") {
                 response.sendRedirect("index.jsp");
             }
         %>
-
-
-
-
 
     </head>
     <body onload="populateNearCriteria();
             populatePrinters();
             disableLinkAll();" >
+        <form id="LanesForm" action="Logout" method="POST" >
         <header class="header1024"><!--header start-->
             <div class="headBg" id="mainContentArea" style="display:none;"><!--headBg start-->
                 <div class="wrapper"><!--wrapper start-->
@@ -86,7 +90,7 @@
                                 <img src="images/gearIcon.png" width="59" alt="Settings" title="Settings"  />
                             </a>
 
-                            <a href="Logout">
+                            <a href="javascript://" onclick="logOut();">
                                 <img src="images/gridIcon.png" width="59" alt="Logout" title="Logout" />
                             </a>
                             <a href="#">
@@ -167,7 +171,7 @@
                             <img src="images/gearIcon.png" width="59" alt="Settings" title="Settings"  />
                         </a>
 
-                        <a href="Logout">
+                        <a href="javascript://" onclick="logOut();">
                             <img src="images/gridIcon.png" width="59" alt="Logout" title="Logout" />
                         </a>
                         <a href="#">
@@ -214,10 +218,8 @@
                         <input type="number" id="frompot" name="from" placeholder="" value="1" min="1" max="152" maxlength="3" required="required" />
                         <span>To</span>
                         <input type="number" id="topot" name="to" placeholder="" value="152" min="1" max="152" maxlength="3"required="required"/>
-
-
-                        <input type="submit" value="Go" onclick="populateFromTo();
-                                displayRange();" />
+                        <input type="button" value="Go" onclick="populateFromTo(); displayRange();" style="margin: 0 1px 0 0;" />
+                        
                     </div><!--headRightTop end-->
                     <div class="headRightBottom"><!--headRightBottom start-->
                         <div class="headRightBottomOdd"><!--headRightBottomOdd start--><a href="#" id="oddpress2" onclick="disableLinkOdd();
@@ -305,7 +307,7 @@
                     <input type="text" id="lpn" name="lpn" required="required" onkeyup="checkLpn();"   onblur="document.body.scrollTop = document.documentElement.scrollTop = 0;" />
                     <font size="1" ><div style="margin-left: 162px; margin-top: 5px;color: red;" id="errlpn"></div></font>
                 </div>
-                <div class="basic-modal-content_MainformArea">
+                <div class="basic-modal-content_MainformArea" style="margin-top:-5px;">
                     <div class="lArea"><label>FORCE AUDIT</label></div>
                     <input type="checkbox" height="10" width="10" onclick="show();" id="audit" name="audit" class="regular-checkbox" /><label for="audit"></label>
                 </div>
@@ -321,7 +323,7 @@
             </div>
         </div>
         <div id="popDiv1" class="ontop">
-
+            <div class="seting">
             <div class="basic-modal-content" id="popupadmin">
                 <div class="basic-modal-content_Head">PREFERENCES
                     <div class="popCloseBtn"><a href="#" onClick="hide('popDiv1')"><img src="images/x.png"/></a></div>
@@ -346,8 +348,7 @@
                     <input type="button" value="OK"  onclick="saveSettings();"/>
                 </div>
             </div>
-
-
+            </div>
         </div>
         <div id="popDiv2" class="ontop">
             <div class="basic-modal-content" id="popupconfirm">
@@ -368,7 +369,7 @@
                 </div>
                 <div class="basic-modal-content_MainformArea" id="labelaudit">
                     <div class="lArea"><label>LABEL FOR AUDIT</label></div>
-                    <input type="text" id="auditfinal" name="auditfinal" readonly="true" style="color: #ffffff"/>
+                    <input type="text" id="auditfinal" name="auditfinal" readonly="true" style="color: #ff3300"/>
                 </div>
 
                 <div class="basic-modal-content_MainformAreaTwo">
@@ -465,7 +466,7 @@
         </div>
         <div id="popDiv10" class="ontop">
             <div class="basic-modal-content" id="popupclosing">
-                <div class="basic-modal-content_Head_new"> NEAR CRITERIA SHOULD NOT BE BLANK
+                <div class="basic-modal-content_Head_new"> NEAR CRITERIA SHOULD BE VALID
                     <div class="popCloseBtn"></div>
                 </div>
 
@@ -485,6 +486,9 @@
                 </div>
             </div>
         </div>
-
+        </form>
     </body>
+    <%} else {
+            response.sendRedirect("/Logout");
+      }%>
 </html>

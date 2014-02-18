@@ -1,39 +1,48 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package com.numina.tophits.action;
 
 import com.numina.tophits.utils.InternalDerbyDbManager;
+import static com.numina.tophits.utils.InternalDerbyDbManager.DEVICE_TABLE;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.logging.Level;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class PersistComment extends HttpServlet {
+/**
+ *
+ * @author Pc
+ */
+public class ShowDevices extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-
-        int laneno = Integer.parseInt(request.getParameter("laneno"));
-        String comment = request.getParameter("comment");
-
         Connection connDerby = null;
         try {
-            String sqlQuery = "update AUDIT_COMMENTS set AUDITCOMMENT='" + comment + "' where LANEID=" + laneno;
+
+            String sqlQuery = "select id,deviceid,devicename from " + DEVICE_TABLE;
+            System.out.println("=============================> Device Data <=============================");
             connDerby = InternalDerbyDbManager.getConnection();
-            InternalDerbyDbManager.executeUpdate(sqlQuery);
-
+            ResultSet rs = InternalDerbyDbManager.executeQueryNoParams(connDerby, sqlQuery);
+            System.out.println("ID~\tDeviceId~\tDeviceName");
+            while (rs.next()) {
+                System.out.println(rs.getString(1)+"\t"+rs.getString(2)+"\t"+rs.getString(3));
+            }
+            System.out.println("=============================> END <=============================");
         } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(PersistComment.class.getName()).log(Level.SEVERE, null, ex);
-
+            java.util.logging.Logger.getLogger(LaneStatus.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 InternalDerbyDbManager.releaseConnection(connDerby);
             } catch (Exception ex) {
-                java.util.logging.Logger.getLogger(PersistComment.class.getName()).log(Level.SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(LaneStatus.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 

@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,26 +27,39 @@ public class InitializeLane extends HttpServlet {
                 String laneNo = request.getParameter("laneno");
 
                 HttpSession session = request.getSession();
-                String empId = (String) session.getAttribute("employeeId");
+                String clientId = (String) session.getAttribute("clientId");
                 
-                    String sql = "update app_closing set state='idle',client_id=0,lp='',force_audit='no',err_msg='' where lane=" + laneNo+" and client_id="+empId;
+                String sql = "update app_closing set state='idle',client_id=0,lp='',force_audit='no',err_msg='' "+
+                             " where lane=" + laneNo+" and client_id="+clientId;
 
-                    PreparedStatement pstmt1 = conn.prepareStatement(sql);
-                    if (pstmt1.executeUpdate() > 0) {
+                PreparedStatement pstmt1 = conn.prepareStatement(sql);
+                
+                if (pstmt1.executeUpdate() > 0) {
+//                    out.print("success");
+                    // Re Instate the Audit flag on the App_lane for discarding the audit
+                    // for re-initialize only for Simulation Purpose
+                    String sql2 = "update app_lanes set audit='no' where lane=" + laneNo;
+                    PreparedStatement pstmt2 = conn.prepareStatement(sql2);
+                    if(pstmt2.executeUpdate()>0){
                         out.print("success");
-                    } else {
+                    }else{
                         out.print("failure");
                     }
-                    pstmt1.close();
-                
-              
-                conn.close();
+                } else {
+                    out.print("failure");
+                }
+                pstmt1.close();
+
             }
         } catch (SQLException e) {
             log.error("Error::" + e);
-
         } finally {
-            out.close();
+            try {
+                conn.close();
+                out.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(InitializeLane.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

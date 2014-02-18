@@ -22,9 +22,9 @@ public class SqlServerDbConnection {
         Connection conn = null;
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            String userName = "sa";
-            String password = "Tophits@123";
-            String url = "jdbc:sqlserver://192.168.1.4:1433" + ";databaseName=TopHits";
+            String userName = "RankUser";
+            String password = "R@nk$$";
+            String url = "jdbc:sqlserver://192.168.1.6:1433" + ";databaseName=PRODSQLSERVER";
             conn = DriverManager.getConnection(url, userName, password);
 //            Statement s1 = conn.createStatement();
 //            ResultSet rs = s1.executeQuery("SELECT * FROM Employee");

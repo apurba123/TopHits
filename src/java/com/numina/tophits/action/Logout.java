@@ -4,6 +4,8 @@ import com.numina.tophits.utils.InternalDerbyDbManager;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,17 +25,20 @@ public class Logout extends HttpServlet {
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession(true);
         String employeeid = (String) session.getAttribute("employeeId");
+        System.out.println("LogOut> EmployeeId:"+employeeid);
         try {
-
             String sqlQuery = "update EMPLOYEE set logstatus='idle' where employeeid='" + employeeid + "'";
-
             InternalDerbyDbManager.executeUpdate(sqlQuery);
-
             session.setAttribute("employeeId", null);
+            session.setAttribute("clientId", null);
+            session.setAttribute("LoginFlag", "0");
             RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
+            session.invalidate();
+            session = request.getSession(true);
+            session.setAttribute("LoginFlag", "0");
             rd.forward(request, response);
         } catch (Exception e) {
-
+            System.out.println("Error:"+e.getMessage());
         } finally {
             out.close();
         }

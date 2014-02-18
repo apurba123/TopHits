@@ -42,7 +42,7 @@ public class LaneStatus extends HttpServlet {
         //int laneno = Integer.parseInt(request.getParameter("laneno"));
         String percent = "90";
         HttpSession session = request.getSession();
-        String cid = (String) session.getAttribute("employeeId");
+        String cid = (String) session.getAttribute("clientId");
 
         Connection connDerby = null;
         if (cid != null) {
@@ -96,7 +96,6 @@ public class LaneStatus extends HttpServlet {
         }
         String laneid[] = state.split(",");
 
-      
         if (laneCount == null
                 || laneCount.equalsIgnoreCase("")) {
             out.println("Invalid Lane Count");
@@ -140,8 +139,7 @@ public class LaneStatus extends HttpServlet {
                             if(fillPercent>=100){
                                 laneStatus = LANE_FULL;
                             }
-                            else
-                            if (fillPercent >= NEAR_PERCNT) {
+                            else if (fillPercent >= NEAR_PERCNT) {
                                 laneStatus = LANE_NEARFULL;
                             } else {
                                 laneStatus = LANE_ACTIVE;

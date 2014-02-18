@@ -21,7 +21,7 @@ public class CheckLaneState extends HttpServlet {
         PrintWriter out = response.getWriter();
         try {
             HttpSession session = request.getSession();
-            String clientid = (String) session.getAttribute("employeeId");
+            String clientid = (String) session.getAttribute("clientId");
             int laneno = Integer.parseInt(request.getParameter("laneno"));
             int cnt = 0;
             Connection conn = DbConnection.getDbConnection();
@@ -40,22 +40,16 @@ public class CheckLaneState extends HttpServlet {
                     out.println("booked");
                 } else {
                     sql = "select state from app_closing where lane=" + laneno;
-
                     PreparedStatement pstmt1 = conn.prepareStatement(sql);
                     ResultSet rs1 = pstmt1.executeQuery();
-
                     String state = "";
-
                     if (rs1.next()) {
                         state = rs1.getString("state");
-
                     }
-
                     out.println(state);
                     pstmt1.close();
                     rs1.close();
                 }
-
                 conn.close();
             }
 

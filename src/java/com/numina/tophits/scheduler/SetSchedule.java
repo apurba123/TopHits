@@ -27,10 +27,11 @@ public class SetSchedule {
 
     public synchronized void setCron() {
         try {
-
+            
             SchedulerFactory sf = new StdSchedulerFactory("quartz.properties");
-            String strDbUpdateCronJobInterval = "0 0/1 * * * ?";
-            String strUpdateSchedule = "0/10 * * * * ?";
+            
+            String strDbUpdateCronJobInterval = "0 0/3 * * * ?";
+            String strUpdateSchedule = "0 0/2 * * * ?";
 
             JobKey updatejob = new JobKey("updatejob", "notificationGroup");
             JobDetail updateDbJob = JobBuilder.newJob(UpdateAppLanes.class)
@@ -57,7 +58,7 @@ public class SetSchedule {
             scheduler.start();
             scheduler.scheduleJob(updateDbJob, trigger1);
             scheduler.scheduleJob(laneDoneJob, trigger2);
-
+            
         } catch (SchedulerException e) {
             log.error("Error initializing notification scheduler " + e.getMessage());
         }

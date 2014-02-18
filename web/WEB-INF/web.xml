@@ -17,6 +17,12 @@
         <description>ServletContextListener</description>
         <listener-class>com.numina.tophits.scheduler.actions.PreContextListener</listener-class>
     </listener>
+    
+    <!-- Servlet Qualified Classes -->
+    <servlet>
+        <servlet-name>WelcomeServlet</servlet-name>
+        <servlet-class>com.numina.tophits.action.WelcomeServlet</servlet-class>
+    </servlet>
     <servlet>
         <servlet-name>Loginservlet</servlet-name>
         <servlet-class>com.numina.tophits.action.Login</servlet-class>
@@ -69,14 +75,28 @@
         <servlet-name>Logout</servlet-name>
         <servlet-class>com.numina.tophits.action.Logout</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>Loginservlet</servlet-name>
-        <url-pattern>/Loginservlet</url-pattern>
-    </servlet-mapping>
     <servlet>
         <servlet-name>LaneStatus</servlet-name>
         <servlet-class>com.numina.tophits.action.LaneStatus</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ShowDevices</servlet-name>
+        <servlet-class>com.numina.tophits.action.ShowDevices</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ShowUtility</servlet-name>
+        <servlet-class>com.numina.tophits.action.ShowUtility</servlet-class>
+    </servlet>
+    
+    <!-- Servlet Mappings -->
+    <servlet-mapping>
+        <servlet-name>WelcomeServlet</servlet-name>
+        <url-pattern>/Welcome</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Loginservlet</servlet-name>
+        <url-pattern>/Loginservlet</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>LaneStatus</servlet-name>
         <url-pattern>/LaneStatus</url-pattern>
@@ -129,12 +149,20 @@
         <servlet-name>Logout</servlet-name>
         <url-pattern>/Logout</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ShowDevices</servlet-name>
+        <url-pattern>/ShowDevices</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ShowUtility</servlet-name>
+        <url-pattern>/ShowUtility</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>Welcome</welcome-file>
     </welcome-file-list>
 </web-app>

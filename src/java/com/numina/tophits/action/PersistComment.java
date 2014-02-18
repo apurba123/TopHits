@@ -1,10 +1,15 @@
 package com.numina.tophits.action;
 
+import com.numina.tophits.utils.DbConnection;
 import com.numina.tophits.utils.InternalDerbyDbManager;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +24,8 @@ public class PersistComment extends HttpServlet {
 
         int laneno = Integer.parseInt(request.getParameter("laneno"));
         String comment = request.getParameter("comment");
-
+        
+        // Update the Local Db for Persisting the Comment Label Data
         Connection connDerby = null;
         try {
             String sqlQuery = "update AUDIT_COMMENTS set AUDITCOMMENT='" + comment + "' where LANEID=" + laneno;
@@ -36,7 +42,24 @@ public class PersistComment extends HttpServlet {
                 java.util.logging.Logger.getLogger(PersistComment.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
+        
+        // Update the TopHits RDS DB for the Audit Flag
+        String sql = "update app_lanes set audit='yes' where lane=" + laneno;
+        Connection conn = null;
+        try{
+            conn = DbConnection.getDbConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            int count = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(PersistComment.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
     }
 
     @Override

@@ -31,21 +31,27 @@ public class LaneClosing extends HttpServlet {
                 String lpnNo = request.getParameter("lpn");
                 String audit = request.getParameter("audit");
                 HttpSession session = request.getSession();
-                String empId = (String) session.getAttribute("employeeId");
+                String clientId = (String) session.getAttribute("clientId");
                 String sql = "select state from app_closing where lane='" + laneNo + "' and state='closing'";
                 PreparedStatement pstmt = conn.prepareStatement(sql);
                 ResultSet rs = pstmt.executeQuery();
                 if (rs.next()) {
                     out.print("duplicate");
                 } else {
-                    sql = "update app_closing set state='closing',client_id='" + empId + "',lp='" + lpnNo + "',force_audit='" + audit + "' where lane=" + laneNo;
+                    sql = "update app_closing set state='closing',client_id='" + clientId + "',lp='" + lpnNo + "',force_audit='" + audit + "' where lane=" + laneNo;
 
                     PreparedStatement pstmt1 = conn.prepareStatement(sql);
-                    String sql1 = "update app_lanes set qty_asked=qty_asked-box_qty_sorted Where lane=" + laneNo;
+                    // Needs to be changed as per the Rev1.1 pdf of the TopHits provided on 3rd Feb 2013
+                    // OLD
+                    //String sql1 = "update app_lanes set qty_asked=qty_asked-box_qty_sorted Where lane=" + laneNo;
+                    // NEW One
+                    String sql1 = "update app_lanes set qty_closed=box_qty_sorted Where lane=" + laneNo;
                     PreparedStatement pst1 = conn.prepareStatement(sql1);
-                    if (pstmt1.executeUpdate() > 0 && pst1.executeUpdate() > 0) {
-                        out.print("success");
-
+                    String sql2 = "update app_lanes set box_qty_sorted=0, qty_asked=(qty_asked-qty_closed) Where lane=" + laneNo;
+                    PreparedStatement pst2 = conn.prepareStatement(sql2);
+                    if (pstmt1.executeUpdate() > 0 
+                            && pst1.executeUpdate() > 0
+                            && pst2.executeUpdate() > 0) {
                         Connection connDerby = null;
                         try {
                             String sqlQuery = "update AUDIT_COMMENTS set AUDITCOMMENT='' where LANEID=" + laneNo;
@@ -61,7 +67,7 @@ public class LaneClosing extends HttpServlet {
                                 java.util.logging.Logger.getLogger(LaneClosing.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
-
+                        out.print("success");
                     } else {
                         out.print("failure");
                     }

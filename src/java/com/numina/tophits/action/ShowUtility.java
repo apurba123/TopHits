@@ -1,8 +1,13 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package com.numina.tophits.action;
 
 import com.numina.tophits.utils.InternalDerbyDbManager;
+import static com.numina.tophits.utils.InternalDerbyDbManager.UTILITY_TABLE;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.logging.Level;
@@ -10,35 +15,29 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
-import javax.servlet.http.HttpSession;
 
-public class ShowPrinters extends HttpServlet {
+/**
+ *
+ * @author Pc
+ */
+public class ShowUtility extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        String printerNames = "";
-        String printer = "";
         Connection connDerby = null;
         try {
 
-            HttpSession session = request.getSession();
-            String cid = (String) session.getAttribute("employeeId");
-            String sqlQuery = "select printer from DEFAULT_PRINTER where clientid=" + cid;
-
+            String sqlQuery = "select id,utilityname,utilityvalue,clientid from " + UTILITY_TABLE;
+            System.out.println("=============================> Utility Data <=============================");
             connDerby = InternalDerbyDbManager.getConnection();
             ResultSet rs = InternalDerbyDbManager.executeQueryNoParams(connDerby, sqlQuery);
-
-            if (rs.next()) {
-                printer = rs.getString(1);
+            System.out.println("ID~\tUtilityName~\tUtilityValue\tClientId");
+            while (rs.next()) {
+                System.out.println(rs.getString(1)+"\t"+rs.getString(2)+"\t"+rs.getString(3)+"\t"+rs.getString(4));
             }
-
+            System.out.println("=============================> END <=============================");
         } catch (Exception ex) {
             java.util.logging.Logger.getLogger(LaneStatus.class.getName()).log(Level.SEVERE, null, ex);
-
         } finally {
             try {
                 InternalDerbyDbManager.releaseConnection(connDerby);
@@ -47,26 +46,6 @@ public class ShowPrinters extends HttpServlet {
             }
         }
 
-        try {
-            PrintService[] ser = PrintServiceLookup.lookupPrintServices(null, null);
-            String selectedprinter = "";
-            for (int i = 0; i < ser.length; ++i) {
-                String p_name = ser[i].getName();
-                if (p_name.trim().equals(printer)) {
-                    selectedprinter = p_name;
-                    printerNames = printerNames + "<option value='" + p_name + "' selected>" + p_name + "</option>";
-                } else {
-                    printerNames = printerNames + "<option value='" + p_name + "'>" + p_name + "</option>";
-                }
-            }
-            printerNames = printerNames + "|" + selectedprinter;
-            if (selectedprinter.equals("")) {
-                printerNames = "<option value='' selected>Select</option>" + printerNames;
-            }
-            out.println(printerNames);
-        } finally {
-            out.close();
-        }
     }
 
     @Override

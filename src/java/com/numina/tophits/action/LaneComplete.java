@@ -25,7 +25,7 @@ public class LaneComplete extends HttpServlet {
         Connection conn = DbConnection.getDbConnection();
         boolean closed = false;
         HttpSession session = request.getSession();
-        String cid = (String) session.getAttribute("employeeId");
+        String cid = (String) session.getAttribute("clientId");
         int lane = 0;
         String error = "";
         if (conn != null) {

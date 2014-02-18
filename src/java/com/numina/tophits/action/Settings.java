@@ -19,7 +19,7 @@ public class Settings extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession();
-        String cid = (String) session.getAttribute("employeeId");
+        String cid = (String) session.getAttribute("clientId");
 
         String percent = request.getParameter("percent");
         String printer = request.getParameter("printer");

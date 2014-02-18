@@ -199,7 +199,7 @@ function populatePrinters()
                 function(data, textStatus, xhr) {
                     var se = data.split(",");
                     document.getElementById('printerList').innerHTML = se[0];
-                    document.getElementById('selectedprinter').value = se[1];
+                    //document.getElementById('selectedprinter').value = se[1];
 
                 },
         error: function(xhr, textStatus, errorThrown) {
@@ -753,15 +753,21 @@ function populateNearCriteria() {
         }
     });
 
+}
 
+function validateTextNumericInRange(textInputId, min, max) {
+    var textInput = document.getElementById(textInputId);
+    var value = parseInt(textInput.value, 10);
+
+    return (!isNaN(value) && value >= min && value <= max);
 }
 
 function saveSettings()
 {
     var percent = document.getElementById('nearcriteria').value;
     var printer = document.getElementById("printerList").options[document.getElementById("printerList").selectedIndex].value;
-
-    if (trim(percent) !== '')
+    
+    if ((trim(percent) !== '') && validateTextNumericInRange('nearcriteria',1,99))
     {
         $.ajax({
             url: "Settings",
@@ -774,7 +780,7 @@ function saveSettings()
                     function() {
                         //alert(myClass);
                     },
-            data: {percent: percent, printer: printer},
+            data: {percent: parseInt(percent, 10), printer: printer},
             success:
                     function(data, textStatus, xhr) {
 
@@ -782,14 +788,12 @@ function saveSettings()
                         {
                             hide('popDiv1');
                             pop('popDiv8');
-
                         }
                         else
                         {
                             hide('popDiv1');
                             pop('popDiv9');
                         }
-
 
                     },
             error: function(xhr, textStatus, errorThrown) {

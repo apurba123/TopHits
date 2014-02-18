@@ -21,7 +21,7 @@ public class NearCriteria extends HttpServlet {
 
         String val = "";
         HttpSession session = request.getSession();
-        String cid = (String) session.getAttribute("employeeId");
+        String cid = (String) session.getAttribute("clientId");
 
         Connection connDerby = null;
         try {

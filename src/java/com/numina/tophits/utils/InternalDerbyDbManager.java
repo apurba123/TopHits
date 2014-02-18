@@ -26,6 +26,7 @@ public class InternalDerbyDbManager {
     public static String DEFAULT_PRINTER_TABLE = "DEFAULT_PRINTER";
     public static String UTILITY_TABLE = "UTILITY";
     public static String LOGIN_TABLE = "EMPLOYEE";
+    public static String DEVICE_TABLE = "DEVICE_LIST";
 
     private static final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
     private static final String dbName = "TopHitsDerbyDb"; // the name of the database
@@ -160,15 +161,16 @@ public class InternalDerbyDbManager {
         }
 
         if (dropTablesIfExists) {
-           // dropAllTables();
+            dropAllTables();
         }
 
-        // Assumption: If the PRINTER_LIST table doesn't exist, none of the
+        // Assumption: If the AUDIT_COMMENTS table doesn't exist, none of the
         // tables exists.  Avoids multiple queries to the database
-        if (!tableExists("PRINTER_LIST")) {
+        if (!tableExists("AUDIT_COMMENTS")) {
             createAuditCommentsTable();
             //createPrinterListTable();
             createDefaultPrinterTable();
+            createDeviceListTable();
             createUtilityTable();
             createEmployeeTable();
             //As all the tables are newly created, so it is necessary 
@@ -238,7 +240,18 @@ public class InternalDerbyDbManager {
                 + "id           INT GENERATED ALWAYS AS IDENTITY CONSTRAINT Utility_PK PRIMARY KEY, "
                 + "utilityname  VARCHAR(50) NOT NULL, "
                 + "utilityvalue VARCHAR(50) DEFAULT '', "
-                + "clientid    INT )");
+                + "clientid     INT )");
+
+    }
+    
+    private static void createDeviceListTable() throws Exception {
+        System.out.println("Creating DEVICE_LIST table");
+
+        executeUpdate(
+                "CREATE TABLE " + DEVICE_TABLE + " ("
+                + "id         INT GENERATED ALWAYS AS IDENTITY CONSTRAINT DeviceId_PK PRIMARY KEY, "
+                + "deviceid   VARCHAR(120) NOT NULL, "
+                + "devicename VARCHAR(150) DEFAULT '' )");
 
     }
 
@@ -296,6 +309,13 @@ public class InternalDerbyDbManager {
                 throw sqle;
             }
         }
+        try {
+            executeUpdate("DROP TABLE " + DEVICE_TABLE);
+        } catch (SQLException sqle) {
+            if (!tableDoesntExist(sqle.getSQLState())) {
+                throw sqle;
+            }
+        }
     }
 
     private static boolean tableDoesntExist(String sqlState) {
@@ -314,6 +334,7 @@ public class InternalDerbyDbManager {
             executeUpdate("DELETE FROM " + PRINTER_LIST_TABLE);
             executeUpdate("DELETE FROM " + DEFAULT_PRINTER_TABLE);
             executeUpdate("DELETE FROM " + UTILITY_TABLE);
+            executeUpdate("DELETE FROM " + DEVICE_TABLE);
         } finally {
             releaseConnection(conn);
         }
@@ -331,13 +352,13 @@ public class InternalDerbyDbManager {
                 pstmt.setString(2, "");
                 pstmt.executeUpdate();
             }
-            log.info("\nDatabase: 152 Rows Added in AUDIT_COMMENTS.");
-//            pstmt = connDerby.prepareStatement("INSERT INTO " + UTILITY_TABLE
-//                    + "(utilityname,utilityvalue) VALUES(?,?)");
-//            pstmt.setString(1, "NearFull");
-//            pstmt.setString(2, "90");
+//            log.info("\nDatabase: 152 Rows Added in AUDIT_COMMENTS.");
+//            pstmt = connDerby.prepareStatement("INSERT INTO " + DEVICE_TABLE
+//                    + "(deviceid,devicename) VALUES(?,?)");
+//            pstmt.setString(1, "win32");
+//            pstmt.setString(2, "Windows");
 //            pstmt.executeUpdate();
-//            log.info("\nDatabase: NearFull set to 90 in UTILITY.");
+//            log.info("\nDatabase: DEVICE_LIST Default to win32 for testing.");
             connDerby.commit();
 
             pstmt.close();

@@ -26,7 +26,7 @@ public class ShowPrinters extends HttpServlet {
         try {
 
             HttpSession session = request.getSession();
-            String cid = (String) session.getAttribute("employeeId");
+            String cid = (String) session.getAttribute("clientId");
             String sqlQuery = "select printer from DEFAULT_PRINTER where clientid=" + cid;
 
             connDerby = InternalDerbyDbManager.getConnection();
