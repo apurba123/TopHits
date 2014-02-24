@@ -29,7 +29,7 @@ public class SetSchedule {
         try {
             
             SchedulerFactory sf = new StdSchedulerFactory("quartz.properties");
-            
+            /*
             String strDbUpdateCronJobInterval = "0 0/3 * * * ?";
             String strUpdateSchedule = "0 0/2 * * * ?";
 
@@ -53,12 +53,13 @@ public class SetSchedule {
                     .withSchedule(
                             CronScheduleBuilder.cronSchedule(strDbUpdateCronJobInterval))
                     .build();
-
+            */
             scheduler = sf.getScheduler();
+            /*
             scheduler.start();
             scheduler.scheduleJob(updateDbJob, trigger1);
             scheduler.scheduleJob(laneDoneJob, trigger2);
-            
+            */
         } catch (SchedulerException e) {
             log.error("Error initializing notification scheduler " + e.getMessage());
         }

@@ -13,6 +13,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.log4j.Logger;
 
 /**
  * 04-Feb-2014
@@ -20,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Bhaskar
  */
 public class WelcomeServlet extends HttpServlet {
-
+    static Logger log = Logger.getLogger(WelcomeServlet.class.getName());
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String computerName = null;
@@ -33,14 +34,12 @@ public class WelcomeServlet extends HttpServlet {
                 computerName = java.net.InetAddress.getLocalHost().getCanonicalHostName();
             }
             //System.out.print("Current MAC address: ");
-            NetworkInterface network = NetworkInterface.getByInetAddress(inetAddress);
-
-            byte[] mac = network.getHardwareAddress();
-
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < mac.length; i++) {
-                sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-            }
+            //NetworkInterface network = NetworkInterface.getByInetAddress(inetAddress);
+            //byte[] mac = network.getHardwareAddress();
+            //StringBuilder sb = new StringBuilder();
+            //for (int i = 0; i < mac.length; i++) {
+            //    sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+            //}
             //System.out.println(sb.toString());
 
             //Add Cookie to the device as unique Id
@@ -75,14 +74,13 @@ public class WelcomeServlet extends HttpServlet {
             }
 
         } catch (Exception e) {
-            //System.out.println("error" + e.getMessage());
-            //  log.error("UnknownHostException detected in StartAction. ", e);
+            e.printStackTrace();
+            log.error("UnknownHost detected in StartAction. "+e.getMessage(), e);
         }
         if (computerName.trim().length() > 0) {
             computerName = computerName.toUpperCase();
         }
-        System.out.println("IP Address: " + remoteAddress);
-        //System.out.println("Computer Name: " + computerName);
+        log.info("Accessed from IP Address: " + remoteAddress);
         response.sendRedirect("index.jsp");
     }
 

@@ -161,7 +161,7 @@ public class InternalDerbyDbManager {
         }
 
         if (dropTablesIfExists) {
-            dropAllTables();
+            //dropAllTables();
         }
 
         // Assumption: If the AUDIT_COMMENTS table doesn't exist, none of the
@@ -362,12 +362,12 @@ public class InternalDerbyDbManager {
             connDerby.commit();
 
             pstmt.close();
-            pstmt = null;
 
         } catch (Exception ex) {
             java.util.logging.Logger.getLogger(InternalDerbyDbManager.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
+                pstmt = null;
                 InternalDerbyDbManager.releaseConnection(connDerby);
             } catch (Exception ex) {
                 java.util.logging.Logger.getLogger(InternalDerbyDbManager.class.getName()).log(Level.SEVERE, null, ex);

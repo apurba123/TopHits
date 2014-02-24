@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 
 public class Login extends HttpServlet {
 
-    Logger log = Logger.getLogger(this.getClass());
+    Logger log = Logger.getLogger(this.getClass().getName());
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -36,8 +36,26 @@ public class Login extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         response.setContentType("text/html;charset=UTF-8");
-        Connection conn = DbConnection.getDbConnection();
-        //Connection conn = SqlServerDbConnection.getDbConnection();
+        //Connection conn = DbConnection.getDbConnection();
+
+        // This is added by Subrata for Testing the MySql Connectivity.
+        Connection conn = null;
+        try {
+            conn = SqlServerDbConnection.getDbConnection();
+            System.out.println(" ######## SQL SERVER connection Successful ###########  " + conn.toString());
+        } catch (Exception ee) {
+            System.out.println(" SQL SERVER connection Error: " + ee.getMessage());
+            ee.printStackTrace();
+        }
+        try {
+            Connection mysqlConnection = DbConnection.getDbConnection();
+            System.out.println(" ######## RDB connection Successful ########### " + mysqlConnection.toString());
+            mysqlConnection.close();
+        } catch (Exception me) {
+            System.out.println("RDB connection Error: " + me.getMessage());
+            me.printStackTrace();
+
+        }
         boolean loginflag = false;
         session.setAttribute("LoginFlag", "0");
         if (conn != null) {
@@ -53,7 +71,6 @@ public class Login extends HttpServlet {
                 //if (request.getParameter("clientName") != null) {
                 //    deviceName = request.getParameter("clientName");
                 //}
-                
                 // For Non-Motorolla Devices and From Browsers
                 //Add Cookie to the device as unique Id
                 Cookie cookie = null;
@@ -71,10 +88,10 @@ public class Login extends HttpServlet {
                     }
                     if (hasCookie) {
                         //Read the cookie value
-                        System.out.println(">>>>>>>>>>>>>>>>>>>>>> Cookie device Id:" + "Name: " + cookie.getName() + ", Value: " + cookie.getValue());
-                        deviceId=cookie.getValue();
+                        log.info("Cookie deviceId Name: " + cookie.getName() + ", Value: " + cookie.getValue());
+                        deviceId = cookie.getValue();
                     } else {
-                        deviceId="" + Math.random();
+                        deviceId = "" + Math.random();
                         Cookie deviceIdCookie = new Cookie("deviceId", deviceId);
                         deviceIdCookie.setMaxAge(60 * 60 * 24 * 365 * 50);
                         //System.out.println(">>>>>>>>>>>>>>>>>>>>>> New Device Cookie @ Step 4.");
@@ -82,7 +99,7 @@ public class Login extends HttpServlet {
                     }
                 } else {
                     // Create cookies.
-                    deviceId="" + Math.random();
+                    deviceId = "" + Math.random();
                     Cookie deviceIdCookie = new Cookie("deviceId", deviceId);
                     deviceIdCookie.setMaxAge(60 * 60 * 24 * 365 * 50);
                     //System.out.println(">>>>>>>>>>>>>>>>>>>>>> New Device Cookie @ Step 3.");
@@ -93,7 +110,6 @@ public class Login extends HttpServlet {
                 deviceName = inetAddress.getCanonicalHostName();
 
                 //System.out.println("Client UniqueId:" + deviceId + " Name:" + deviceName + " Current Time in Milis:" + System.currentTimeMillis());
-
                 String uid = "";
                 if (request.getParameter("uid_r") != null) {
                     uid = request.getParameter("uid_r");
@@ -103,11 +119,11 @@ public class Login extends HttpServlet {
                     pwd = request.getParameter("pwd_r");
                 }
 
-                System.out.println("EmployeeId:" + uid);
+                log.info("Employee Id/UserName:" + uid);
                 session.setAttribute("employeeId", uid);
 
-                String sql = "select employee_id,password from employee_login where employee_id='" + uid + "' and password='" + pwd + "'";
-                //String sql = "select EmployeeId,Password from Employee where EmployeeId='" + uid + "' and Password='" + pwd + "'";
+                //String sql = "select employee_id,password from employee_login where employee_id='" + uid + "' and password='" + pwd + "'";
+                String sql = "select EmployeeId,Password from Employee where EmployeeId='" + uid + "' and Password='" + pwd + "'";
                 PreparedStatement pstmt = conn.prepareStatement(sql);
                 ResultSet rs = pstmt.executeQuery();
                 while (rs.next()) {
@@ -142,7 +158,8 @@ public class Login extends HttpServlet {
                         }
                         session.setAttribute("clientId", ("" + clientId));
                     } catch (Exception ex) {
-                        java.util.logging.Logger.getLogger(LaneStatus.class.getName()).log(Level.SEVERE, null, ex);
+                        ex.printStackTrace();
+                        log.error("Error in DerbyDb Accessing 1st Part: " + ex.getMessage(), ex);
                     } finally {
                         try {
                             InternalDerbyDbManager.releaseConnection(connDerby);
@@ -193,7 +210,7 @@ public class Login extends HttpServlet {
                         }
                         //System.out.println("Status Db:" + status.trim() + " Status Value:" + statusflag);
                     } catch (Exception ex) {
-                        java.util.logging.Logger.getLogger(LaneStatus.class.getName()).log(Level.SEVERE, null, ex);
+                        log.error("Error in DerbyDb Accessing 2nd Part: " + ex.getMessage(), ex);
                     } finally {
                         try {
                             InternalDerbyDbManager.releaseConnection(connDerby);
@@ -220,8 +237,8 @@ public class Login extends HttpServlet {
                 }
 
             } catch (SQLException e) {
-                log.error("Error::" + e);
-
+                log.error("Error: " + e.getMessage());
+                e.printStackTrace();
             } finally {
                 try {
                     conn.close();

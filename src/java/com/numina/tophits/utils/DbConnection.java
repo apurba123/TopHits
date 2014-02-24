@@ -21,9 +21,10 @@ public class DbConnection {
             conn = ds.getConnection();
 
         } catch (NamingException ex) {
-            log.error("Error in getting DB Connection " + ex);
+            System.out.println("RDB DB ->Naming Exception -> Error in getting DB Connection " + ex);
+            ex.printStackTrace();
         } catch (SQLException ex) {
-            log.error("Error in getting DB Connection " + ex);
+            System.out.println("RDB DB ->SQL Exception->Error in getting DB Connection " + ex);
         }
         return conn;
     }

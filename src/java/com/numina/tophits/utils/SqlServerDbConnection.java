@@ -5,9 +5,11 @@
  */
 package com.numina.tophits.utils;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 import org.apache.log4j.Logger;
 
 /**
@@ -22,10 +24,18 @@ public class SqlServerDbConnection {
         Connection conn = null;
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            String userName = "RankUser";
-            String password = "R@nk$$";
-            String url = "jdbc:sqlserver://192.168.1.6:1433" + ";databaseName=PRODSQLSERVER";
-            conn = DriverManager.getConnection(url, userName, password);
+            Properties prop = new Properties();
+            prop.load(SqlServerDbConnection.class.getClassLoader().getResourceAsStream("dbConnection.properties"));
+            String connectionIpAddres = prop.getProperty("sqlServer.HostIpAddress");
+            String connectionPort = prop.getProperty("sqlServer.HostPort");
+            String dbName = prop.getProperty("sqlServer.DatabaseName");
+            String userName = prop.getProperty("sqlServer.UserName");
+            String password = prop.getProperty("sqlServer.Password");
+            String connectionUrl = "jdbc:sqlserver://" + connectionIpAddres + ":" + connectionPort + ";databaseName=" + dbName;
+
+            log.info("Starting SQL Server Connection using: " + connectionUrl);
+
+            conn = DriverManager.getConnection(connectionUrl, userName, password);
 //            Statement s1 = conn.createStatement();
 //            ResultSet rs = s1.executeQuery("SELECT * FROM Employee");
 //
@@ -36,9 +46,14 @@ public class SqlServerDbConnection {
 //            }
 
         } catch (ClassNotFoundException e) {
-            log.error("Error in db sql server connection");
+            System.out.println("Error in finding sql server connection driver class (com.microsoft.sqlserver.jdbc.SQLServerDriver):" + e.getMessage());
+            e.printStackTrace();
         } catch (SQLException e) {
-             log.error("Error in db sql server connection");
+            System.out.println("Error in sql server connection:" + e.getMessage());
+            e.printStackTrace();
+        } catch (IOException ex) {
+            System.out.println("Error in Property File Loading:" + ex.getMessage());
+            ex.printStackTrace();
         }
 
         return conn;
