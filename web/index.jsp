@@ -45,7 +45,7 @@
                     String st = (String) request.getParameter("status");
                     if (st.equals("0")) {
             %>
-                document.getElementById('message').innerHTML = "Invalid User Name or Password";
+                document.getElementById('message').innerHTML = "Invalid User Name";
             <%      } else if (st.equals("1")) {%>
                 document.getElementById('message').innerHTML = 'Already Logged In. Please <a href="javascript://" style="color:red;text-decoration:underline" onclick="logOut();"> Logout </a>';
             <%      }
@@ -75,22 +75,22 @@
                 //}
                 
                 var t = 0;
-                if (document.getElementById('Lusername').value === "" && document.getElementById('Lpassword').value === "")
-                {
-                    t = 1;
-                    document.getElementById('message').innerHTML = "Enter User Name & Password";
-                }
-                else
+                //if (document.getElementById('Lusername').value === "" && document.getElementById('Lpassword').value === "")
+                //{
+                //    t = 1;
+                //    document.getElementById('message').innerHTML = "Enter User Name & Password";
+                //}
+                //else
                 if (document.getElementById('Lusername').value === "")
                 {
                     t = 1;
                     document.getElementById('message').innerHTML = "Enter User Name";
                 }
-                else
-                if (document.getElementById('Lpassword').value === "") {
-                    document.getElementById('message').innerHTML = "Enter Password";
-                    t = 1
-                }
+                //else
+                //if (document.getElementById('Lpassword').value === "") {
+                //    document.getElementById('message').innerHTML = "Enter Password";
+                //    t = 1
+                //}
 
                 if (t == 0){
                     return true;
@@ -119,7 +119,7 @@
                             <%-- <label>User Name:</label>	--%>	
                             <input type="text" id="Lusername" title="User Name" name="uid_r" tabindex="1" placeholder="User Name" value="" required style="alignment-adjust: after-edge" />
                             <%-- <label>Password:</label>	--%>	           
-                            <input id="Lpassword" name="pwd_r" title="Password"  type="password" tabindex="2" placeholder="Password" value="" required />
+                            <%-- <input id="Lpassword" name="pwd_r" title="Password"  type="password" tabindex="2" placeholder="Password" value="" required /> --%>
                             <%--
                             <input type="hidden" id="clientId" name="clientId" />
                             <input type="hidden" id="clientName" name="clientName" 

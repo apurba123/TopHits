@@ -114,16 +114,18 @@ public class Login extends HttpServlet {
                 if (request.getParameter("uid_r") != null) {
                     uid = request.getParameter("uid_r");
                 }
+                /* Not Required Now
                 String pwd = "";
                 if (request.getParameter("pwd_r") != null) {
                     pwd = request.getParameter("pwd_r");
                 }
-
+                */
                 log.info("Employee Id/UserName:" + uid);
                 session.setAttribute("employeeId", uid);
 
                 //String sql = "select employee_id,password from employee_login where employee_id='" + uid + "' and password='" + pwd + "'";
-                String sql = "select EmployeeId,Password from Employee where EmployeeId='" + uid + "' and Password='" + pwd + "'";
+                //String sql = "select EmployeeId,Password from Employee where EmployeeId='" + uid + "' and Password='" + pwd + "'";
+                String sql = "select EmployeeId,Password from Employee where EmployeeId='" + uid + "'";
                 PreparedStatement pstmt = conn.prepareStatement(sql);
                 ResultSet rs = pstmt.executeQuery();
                 while (rs.next()) {
